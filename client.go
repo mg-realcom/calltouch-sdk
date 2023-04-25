@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -57,7 +58,7 @@ func NewClient(accessToken string) *Client {
 //	return err
 //}
 
-func (c *Client) urlBuilder(method string, siteID int, dateFrom time.Time, dateTo time.Time) (u url.URL, err error) {
+func (c *Client) urlBuilder(method string, siteID int, dateFrom time.Time, dateTo time.Time, page int) (u url.URL, err error) {
 	if dateFrom.After(dateTo) {
 		return u, errors.New("dateFrom must be before dateTo")
 	}
@@ -75,7 +76,7 @@ func (c *Client) urlBuilder(method string, siteID int, dateFrom time.Time, dateT
 	params.Add("clientApiId", c.AccessToken)
 	params.Add("dateFrom", dateFromString)
 	params.Add("dateTo", dateToString)
-	params.Add("page", "1")
+	params.Add("page", strconv.Itoa(page))
 	params.Add("limit", "1000")
 	u.RawQuery = params.Encode()
 
@@ -83,33 +84,41 @@ func (c *Client) urlBuilder(method string, siteID int, dateFrom time.Time, dateT
 }
 
 func (c *Client) CallsDiary(siteID int, dateFrom time.Time, dateTo time.Time) (calls []Call, err error) {
-	u, err := c.urlBuilder("calls-diary/calls", siteID, dateFrom, dateTo)
-	if err != nil {
-		return nil, err
+	isOk := false
+	page := 0
+	for !isOk {
+		page++
+		u, err := c.urlBuilder("calls-diary/calls", siteID, dateFrom, dateTo, page)
+		if err != nil {
+			return nil, err
+		}
+
+		req, err := http.Get(u.String())
+		if err != nil {
+			return nil, err
+		}
+		defer req.Body.Close()
+
+		if req.StatusCode != 200 {
+			return nil, errors.New(fmt.Sprintf("status code: %v", req.StatusCode))
+		}
+
+		responseBody, err := io.ReadAll(req.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		var data CallReport
+		err = json.Unmarshal(responseBody, &data)
+		if err != nil {
+			return nil, err
+		}
+
+		calls = append(calls, data.Records...)
+		isOk = data.PageTotal == data.Page
 	}
 
-	req, err := http.Get(u.String())
-	if err != nil {
-		return nil, err
-	}
-	defer req.Body.Close()
-
-	if req.StatusCode != 200 {
-		return nil, errors.New(fmt.Sprintf("status code: %v", req.StatusCode))
-	}
-
-	responseBody, err := io.ReadAll(req.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var data CallReport
-	err = json.Unmarshal(responseBody, &data)
-	if err != nil {
-		return nil, err
-	}
-
-	return data.Records, nil
+	return calls, nil
 }
 
 type CallReport struct {
