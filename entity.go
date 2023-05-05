@@ -1,13 +1,13 @@
 package calltouch
 
-type Order struct {
-	CompletedAmount int    `json:"completedAmount"`
-	CompletedDate   string `json:"completedDate"`
-	CreatedDate     string `json:"createdDate"`
-	OrderDate       string `json:"orderDate"`
-	OrderID         int    `json:"orderId"`
-	OrderNumber     string `json:"orderNumber"`
-	PlannedAmount   int    `json:"plannedAmount"`
+type CallOrder struct {
+	CompletedAmount int    `json:"completedAmount"` // Реальная сумма контракта
+	CompletedDate   string `json:"completedDate"`   // Дата подписания контракта
+	CreatedDate     string `json:"createdDate"`     // Дата создания контракта
+	OrderDate       string `json:"orderDate"`       // Дата заказа
+	OrderID         int    `json:"orderId"`         // ID сделки в Calltouch
+	OrderNumber     string `json:"orderNumber"`     // Номер заказа
+	PlannedAmount   int    `json:"plannedAmount"`   // Планируемая сумма контракта
 }
 
 type Tag struct {
@@ -59,7 +59,7 @@ type Call struct {
 	Comments        *[]Comment     `json:"comments"`        // Комментарии к звонкам, оставленные в плеере журнала звонков.
 	Phrases         *[]Phrase      `json:"phrases"`         // массив фраз из звонка (соблюдая последовательность)
 	AdditionalTags  []ValueField   `json:"additionalTags"`  // Дополнительные параметры отслеживания платного трафика.
-	Orders          []Order        `json:"orders"`          // Массив всех сделок, связанных со звонком.
+	Orders          []CallOrder    `json:"orders"`          // Массив всех сделок, связанных со звонком.
 	YandexDirect    *YandexDirect  `json:"yandexDirect"`    // Данные для Яндекс.Директа.
 	GoogleAdWords   *GoogleAdWords `json:"googleAdWords"`   // Данные для GoogleAds.
 	CallbackInfo    CallBackInfo   `json:"callbackInfo"`    // Данные (ФИО, email, номер телефона) из форм обратного звонка, оставленных в соц. сетях
@@ -72,116 +72,78 @@ type Call struct {
 }
 
 type Lead struct {
-	Date              int64          `json:"date"`
-	Comments          []Comment      `json:"comments"`
-	RequestType       string         `json:"requestType"`
-	DateStr           string         `json:"dateStr"`
-	Manager           string         `json:"manager"`
-	Session           Session        `json:"session"`
-	Subject           string         `json:"subject"`
-	UniqTargetRequest bool           `json:"uniqTargetRequest"`
-	UniqueRequest     bool           `json:"uniqueRequest"`
-	YandexDirect      *YandexDirect  `json:"yandexDirect"`
-	GoogleAdWords     *GoogleAdWords `json:"googleAdWords"`
-	RequestNumber     string         `json:"requestNumber"`
-	RequestID         int            `json:"requestId"`
-	Client            ClientInfo     `json:"client"`
-	SiteID            int            `json:"siteId"`
-	Orders            []LeadOrder    `json:"orders"`
-	TargetRequest     bool           `json:"targetRequest"`
-	Status            string         `json:"status"`
-	Order             interface{}    `json:"order"`
-	MapVisits         []MapVisits    `json:"mapVisits"`
-	RequestURL        *string        `json:"requestUrl"`
-	CtClientID        *int64         `json:"ctClientId"`
-	DCM               *[]DCM         `json:"dcm"`
-	CtGlobalID        *int           `json:"ctGlobalId"`
-	WidgetInfo        interface{}    `json:"widgetInfo"`
-	RequestTags       *[]RequestTag  `json:"RequestTags"`
+	Date              int64          `json:"date"`              // Дата и время создания заявки в формате Unix Timestamp в миллисекундах.
+	Comments          []Comment      `json:"comments"`          // Комментарии к заявкам.
+	DateStr           string         `json:"dateStr"`           // Дата и время создания заявки в формате dd/mm/yyyy hh:mm:ss.
+	Manager           string         `json:"manager"`           // ФИО менеджера, который был присвоен заявке с помощью API-метода присвоения менеджеров к лидам
+	Session           Session        `json:"session"`           // Объект будет содержать вложенные объекты с описанием посещения, за которым закрепилась заявка.
+	Subject           string         `json:"subject"`           // Название формы на Вашем сайте, которое Вы отправили в запросе.
+	UniqTargetRequest bool           `json:"uniqTargetRequest"` // Уникально-целевая заявка.
+	UniqueRequest     bool           `json:"uniqueRequest"`     // Уникальная заявка.
+	YandexDirect      *YandexDirect  `json:"yandexDirect"`      // Данные для Яндекс.Директа.
+	GoogleAdWords     *GoogleAdWords `json:"googleAdWords"`     // Данные для GoogleAds.
+	RequestNumber     string         `json:"requestNumber"`     // Уникальный идентификатор заявки на Вашем сайте, который Вы отправили в запросе.
+	RequestID         int            `json:"requestId"`         // Уникальный идентификатор заявки в Calltouch.
+	Client            ClientInfo     `json:"client"`            // Объект будет содержать вложенные объекты с описанием клиента, данные по которому Вы отправили в запросе.
+	Orders            []LeadOrder    `json:"orders"`            // Массив всех сделок, связанных с заявкой.
+	TargetRequest     bool           `json:"targetRequest"`     // Целевая заявка.
+	MapVisits         *[]MapVisits   `json:"mapVisits"`         // История посещений.
+	CtClientID        *int64         `json:"ctClientId"`        // Идентификатор посетителя Calltouch. Он представляет из себя значение нашей куки _ct.
+	DCM               *[]DCM         `json:"dcm"`               // Данные по отправке заявки с DoubleClick Campaign Manager.
+	CtGlobalID        *int           `json:"ctGlobalId"`        // Глобальный идентификатор посетителя Calltouch, общий для сайтов, на которых установлен скрипт Calltouch.
+	WidgetInfo        interface{}    `json:"widgetInfo"`        // Данные по кастомным полям заявки из виджета.
+	RequestTags       *[]RequestTag  `json:"RequestTags"`       //Теги заявок
 }
 
 type Comment struct {
-	CommentID int    `json:"commentId"`
-	RequestID int    `json:"requestId"`
-	Comment   string `json:"comment"`
-	PartyID   int    `json:"partyId"`
-	PartyName string `json:"partyName"`
+	CommentID int    `json:"commentId"` // ID комментария
+	RequestID int    `json:"requestId"` // ID заявки, по которой оставлен комментарий
+	Comment   string `json:"comment"`   // ID заявки, по которой оставлен комментарий
+	PartyID   int    `json:"partyId"`   // ID пользователя, оставившего комментарий
+	PartyName string `json:"partyName"` // Логин пользователя, оставившего комментарий
 }
 
 type Session struct {
-	SessionID      int           `json:"sessionId"`
-	Keywords       string        `json:"keywords"`
-	City           string        `json:"city"`
-	IP             string        `json:"ip"`
-	Source         string        `json:"source"`
-	Medium         string        `json:"medium"`
-	Ref            string        `json:"ref"`
-	URL            string        `json:"url"`
-	UtmSource      string        `json:"utmSource"`
-	UtmMedium      string        `json:"utmMedium"`
-	UtmTerm        string        `json:"utmTerm"`
-	UtmContent     string        `json:"utmContent"`
-	UtmCampaign    string        `json:"utmCampaign"`
-	GuaClientID    string        `json:"guaClientId"`
-	SessionDate    string        `json:"sessionDate"`
-	Attrs          interface{}   `json:"attrs"`
-	Attribution    int           `json:"attribution"`
-	YaClientID     string        `json:"yaClientId"`
-	AdditionalTags []interface{} `json:"additionalTags"`
-	CtGlobalID     *int          `json:"ctGlobalId"`
-	Browser        string        `json:"browser"`
+	SessionID   int         `json:"sessionId"`   // Идентификатор сессии Calltouch, который Вы отправили в запросе ранее
+	Keywords    string      `json:"keywords"`    // Ключевой запрос
+	City        string      `json:"city"`        // Город посетителя (определяется по его IP-адресу)
+	IP          string      `json:"ip"`          // IP-адрес
+	Source      string      `json:"source"`      // Источник перехода
+	Medium      string      `json:"medium"`      // Канал перехода
+	Ref         string      `json:"ref"`         // Адрес страницы, с которой был совершен реферальный переход на Ваш отслеживаемый сайт
+	URL         string      `json:"url"`         // Адрес входа на сайт (может отличаться от страницы, с которой в итоге был совершен звонок)
+	UtmSource   string      `json:"utmSource"`   // Значение utm-метки utm_source
+	UtmMedium   string      `json:"utmMedium"`   // Значение utm-метки utm_medium
+	UtmTerm     string      `json:"utmTerm"`     // Значение utm-метки utm_term
+	UtmContent  string      `json:"utmContent"`  // Значение utm-метки utm_content
+	UtmCampaign string      `json:"utmCampaign"` // Значение utm-метки utm_campaign
+	GuaClientID string      `json:"guaClientId"` // Идентификатор Google Client ID (присутствует, если настроена интеграция с Google Analytics)
+	Attrs       interface{} `json:"attrs"`       // Сторонние параметры, переданные заранее в статистику Calltouch.
+	Attribution int         `json:"attribution"` // Текущая модель атрибуции, согласно которой определился источник заявки
+	YaClientID  string      `json:"yaClientId"`  // Идентификатор Yandex Client ID (присутствует, если настроена интеграция с Яндекс.Метрика)
+	CtGlobalID  *int        `json:"ctGlobalId"`  // Глобальный идентификатор посетителя Calltouch, общий для сайтов, на которых установлен скрипт Calltouch
+	Browser     string      `json:"browser"`     // Браузер
 }
 
 type ClientInfo struct {
-	ClientID int    `json:"clientId"`
-	Fio      string `json:"fio"`
+	ClientID int    `json:"clientId"` // Идентификатор клиента внутри Calltouch
+	Fio      string `json:"fio"`      // Имя клиента
 	Phones   []struct {
-		PhoneNumber string `json:"phoneNumber"`
+		PhoneNumber string `json:"phoneNumber"` // Номер телефона клиента
 		PhoneType   string `json:"phoneType"`
 	} `json:"phones"`
 	Contacts []struct {
 		ContactType  string `json:"contactType"`
-		ContactValue string `json:"contactValue"`
+		ContactValue string `json:"contactValue"` // Почта клиента
 	} `json:"contacts"`
 }
 
 type LeadOrder struct {
-	OrderID       int         `json:"orderId"`
-	CallID        *int        `json:"callId"`
-	DateCreated   int64       `json:"dateCreated"`
-	Status        string      `json:"status"`
-	RealSum       string      `json:"realSum"`
-	Offered       interface{} `json:"offered"`
-	Sent          string      `json:"sent"`
-	Sum           string      `json:"sum"`
-	IsMarked      interface{} `json:"isMarked"`
-	CommentsCount int         `json:"commentsCount"`
-	CurrentAmount int         `json:"currentAmount"`
-	OrderNumber   string      `json:"orderNumber"`
-	OrderSum      string      `json:"orderSum"`
-	OrderStatus   string      `json:"orderStatus"`
-	OrderComments string      `json:"orderComments"`
-	Session       struct {
-		Keywords       string        `json:"keywords"`
-		City           string        `json:"city"`
-		IP             string        `json:"ip"`
-		Browser        string        `json:"browser"`
-		Source         string        `json:"source"`
-		Medium         string        `json:"medium"`
-		Ref            string        `json:"ref"`
-		URL            string        `json:"url"`
-		UtmSource      string        `json:"utmSource"`
-		UtmMedium      string        `json:"utmMedium"`
-		UtmTerm        string        `json:"utmTerm"`
-		UtmContent     string        `json:"utmContent"`
-		UtmCampaign    string        `json:"utmCampaign"`
-		GuaClientID    interface{}   `json:"guaClientId"`
-		YaClientID     interface{}   `json:"yaClientId"`
-		SessionID      int           `json:"sessionId"`
-		AdditionalTags []interface{} `json:"additionalTags"`
-		Attribution    int           `json:"attribution"`
-		Attrs          interface{}   `json:"attrs"`
-	} `json:"session"`
+	OrderID     int    `json:"orderId"`     // Идентификатор сделки внутри Calltouch
+	DateCreated int64  `json:"dateCreated"` // Дата и время создания сделки
+	Status      string `json:"status"`      // Статус сделки
+	Sum         string `json:"sum"`         // Бюджет сделки
+	OrderNumber string `json:"orderNumber"` // Уникальный идентификатор сделки в CRM
 }
 
 type YandexDirect struct {
@@ -199,11 +161,11 @@ type GoogleAdWords struct {
 }
 
 type DCM struct {
-	ProfileIDDCM              int    `json:"profileIdDCM"`
-	FloodlightConfigurationID string `json:"floodlightConfigurationId"`
-	FloodlightActivityID      string `json:"floodlightActivityId"`
-	RequestStatus             string `json:"requestStatus"`
-	RequestErrors             string `json:"requestErrors"`
+	ProfileIDDCM              int     `json:"profileIdDCM"`              // Идентификатор профиля DCM
+	FloodlightConfigurationID string  `json:"floodlightConfigurationId"` // Конфигурация из DCM
+	FloodlightActivityID      string  `json:"floodlightActivityId"`      // Идентификатор флудлайта
+	RequestStatus             string  `json:"requestStatus"`             // Статус отправки заявки в DCM.
+	RequestErrors             *string `json:"requestErrors"`             // Описание ошибки отправки заявки в DCM
 }
 
 type MapVisits struct {
@@ -235,9 +197,9 @@ type RequestTag []struct {
 }
 
 type Phrase struct {
-	Channel int    `json:"channel"`
-	Time    string `json:"time"`
-	Message string `json:"message"`
+	Channel int    `json:"channel"` // Канал (1 - оператор, 0 - клиент)
+	Time    string `json:"time"`    // Временная метка начала фразы в формате ММ:СС
+	Message string `json:"message"` // Текст фразы
 }
 
 type CallBackInfo struct {
