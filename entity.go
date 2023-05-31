@@ -65,17 +65,17 @@ type Call struct {
 	CallbackInfo    CallBackInfo   `json:"callbackInfo"`    // Данные (ФИО, email, номер телефона) из форм обратного звонка, оставленных в соц. сетях
 	CtClientID      *int           `json:"ctClientId"`      // Идентификатор посетителя Calltouch. Он представляет из себя значение нашей куки _ct.
 	DCM             *DCM           `json:"dcm"`             // Данные по отправке звонка с DoubleClick Campaign Manager.
-	PhonesInText    *[]string      `json:"phonesInText"`    //Массив номеров телефонов, полученных из текста разговора (номера были произнесены в ходе разговора)
+	PhonesInText    *[]string      `json:"phonesInText"`    // Массив номеров телефонов, полученных из текста разговора (номера были произнесены в ходе разговора)
 	CtGlobalID      *int           `json:"ctGlobalId"`      // Глобальный идентификатор посетителя Calltouch, общий для сайтов, на которых установлен скрипт Calltouch.
 	SubPoolName     *string        `json:"subPoolName"`     // Название сабпула, с которым связан рекламный номер.
 	StatusDetails   string         `json:"statusDetails"`   // Детализация статуса звонка.
 }
 
 type Lead struct {
-	Date              int64          `json:"date"`              // Дата и время создания заявки в формате Unix Timestamp в миллисекундах.
-	Comments          []Comment      `json:"comments"`          // Комментарии к заявкам.
-	DateStr           string         `json:"dateStr"`           // Дата и время создания заявки в формате dd/mm/yyyy hh:mm:ss.
-	Manager           string         `json:"manager"`           // ФИО менеджера, который был присвоен заявке с помощью API-метода присвоения менеджеров к лидам
+	Date              int64          `json:"date"`              // Дата и время создания заявки в формате Unix Timestamp в миллисекундах. +
+	Comments          []Comment      `json:"comments"`          // Комментарии к заявкам. +
+	DateStr           string         `json:"dateStr"`           // Дата и время создания заявки в формате dd/mm/yyyy hh:mm:ss. -
+	Manager           string         `json:"manager"`           // ФИО менеджера, который был присвоен заявке с помощью API-метода присвоения менеджеров к лидам +
 	Session           Session        `json:"session"`           // Объект будет содержать вложенные объекты с описанием посещения, за которым закрепилась заявка.
 	Subject           string         `json:"subject"`           // Название формы на Вашем сайте, которое Вы отправили в запросе.
 	UniqTargetRequest bool           `json:"uniqTargetRequest"` // Уникально-целевая заявка.
@@ -92,20 +92,20 @@ type Lead struct {
 	DCM               *[]DCM         `json:"dcm"`               // Данные по отправке заявки с DoubleClick Campaign Manager.
 	CtGlobalID        *int           `json:"ctGlobalId"`        // Глобальный идентификатор посетителя Calltouch, общий для сайтов, на которых установлен скрипт Calltouch.
 	WidgetInfo        interface{}    `json:"widgetInfo"`        // Данные по кастомным полям заявки из виджета.
-	RequestTags       *[]RequestTag  `json:"RequestTags"`       //Теги заявок
+	RequestTags       *[]RequestTag  `json:"RequestTags"`       // Теги заявок
 }
 
 type Comment struct {
 	CommentID int    `json:"commentId"` // ID комментария
 	RequestID int    `json:"requestId"` // ID заявки, по которой оставлен комментарий
-	Comment   string `json:"comment"`   // ID заявки, по которой оставлен комментарий
+	Comment   string `json:"comment"`   // Комментарий
 	PartyID   int    `json:"partyId"`   // ID пользователя, оставившего комментарий
 	PartyName string `json:"partyName"` // Логин пользователя, оставившего комментарий
 }
 
 type Session struct {
-	SessionID   int         `json:"sessionId"`   // Идентификатор сессии Calltouch, который Вы отправили в запросе ранее
-	Keywords    string      `json:"keywords"`    // Ключевой запрос
+	SessionID   int         `json:"sessionId"`   // Идентификатор сессии Calltouch, который Вы отправили в запросе ранее +
+	Keywords    string      `json:"keywords"`    // Ключевой запрос +
 	City        string      `json:"city"`        // Город посетителя (определяется по его IP-адресу)
 	IP          string      `json:"ip"`          // IP-адрес
 	Source      string      `json:"source"`      // Источник перехода
