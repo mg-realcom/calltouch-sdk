@@ -45,9 +45,9 @@ type CallOptions struct {
 	withDcm           bool // Флаг выгрузки данных по интеграции с DoubleClick Campaign Manager
 }
 
-func (c *Client) CallsDiary(ctx context.Context, siteID int, period Period, options *CallOptions) ([]Call, error) {
+func (c *Client) CallsDiary(ctx context.Context, siteID int, period Period, options *CallOptions) ([]Record, error) {
 	page := 0
-	calls := make([]Call, 0)
+	calls := make([]Record, 0)
 
 	var isOk bool
 	for !isOk {
@@ -138,11 +138,53 @@ func (c *Client) callURLBuilder(method string, siteID int, period Period, page i
 }
 
 type CallReport struct {
-	Page         int    `json:"page"`
-	PageTotal    int    `json:"pageTotal"`
-	PageSize     int    `json:"pageSize"`
-	RecordsTotal int    `json:"recordsTotal"`
-	Records      []Call `json:"records"`
+	Page         int      `json:"page"`
+	PageTotal    int      `json:"pageTotal"`
+	PageSize     int      `json:"pageSize"`
+	RecordsTotal int      `json:"recordsTotal"`
+	Records      []Record `json:"records"`
+}
+
+type Record map[string]string
+
+func (r *Record) UnmarshalJSON(b []byte) error {
+	var raw map[string]interface{}
+
+	err := json.Unmarshal(b, &raw)
+	if err != nil {
+		return err
+	}
+
+	var conv string
+
+	var result map[string]string
+
+	for k, val := range raw {
+		if val == nil {
+			continue
+		}
+
+		switch val := val.(type) {
+		case string:
+			if val == "" {
+				continue
+			}
+
+			conv = val
+		case int:
+			conv = fmt.Sprintf("%d", val)
+		case float64:
+			conv = fmt.Sprintf("%f", val)
+		default:
+			conv = fmt.Sprintf("%v", val)
+		}
+
+		result[k] = conv
+	}
+
+	*r = result
+
+	return nil
 }
 
 type LeadOptions struct {
@@ -153,7 +195,7 @@ type LeadOptions struct {
 	withDcm           bool // Флаг выгрузки данных по интеграции с DoubleClick Campaign Manager
 }
 
-func (c *Client) LeadsDiary(ctx context.Context, period Period, options *LeadOptions) ([]Lead, error) {
+func (c *Client) LeadsDiary(ctx context.Context, period Period, options *LeadOptions) ([]Record, error) {
 	u, err := c.leadURLBuilder(period, options)
 	if err != nil {
 		return nil, err
@@ -180,7 +222,7 @@ func (c *Client) LeadsDiary(ctx context.Context, period Period, options *LeadOpt
 		return nil, err
 	}
 
-	var leads []Lead
+	var leads []Record
 
 	err = json.Unmarshal(responseBody, &leads)
 	if err != nil {
