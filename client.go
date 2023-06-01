@@ -157,7 +157,7 @@ func (r *Record) UnmarshalJSON(b []byte) error {
 
 	var conv string
 
-	var result map[string]string
+	result := make(map[string]string, 0)
 
 	for k, val := range raw {
 		if val == nil {
