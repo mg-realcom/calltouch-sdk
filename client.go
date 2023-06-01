@@ -173,6 +173,12 @@ func (r *Record) UnmarshalJSON(b []byte) error {
 			}
 
 			conv = strings.TrimFunc(val, func(r rune) bool { return !unicode.IsGraphic(r) })
+			conv = strings.Map(func(r rune) rune {
+				if unicode.IsPrint(r) {
+					return r
+				}
+				return -1
+			}, conv)
 		case int:
 			conv = fmt.Sprintf("%d", val)
 		case float64:
