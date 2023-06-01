@@ -10,7 +10,9 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
+	"unicode"
 )
 
 const DateFormat = "02/01/2006"
@@ -170,7 +172,7 @@ func (r *Record) UnmarshalJSON(b []byte) error {
 				continue
 			}
 
-			conv = val
+			conv = strings.TrimFunc(val, func(r rune) bool { return !unicode.IsGraphic(r) })
 		case int:
 			conv = fmt.Sprintf("%d", val)
 		case float64:
