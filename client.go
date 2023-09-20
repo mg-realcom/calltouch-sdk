@@ -15,7 +15,10 @@ import (
 	"unicode"
 )
 
-const DateFormat = "01/02/2006"
+const (
+	LeadsDateFormat = "01/02/2006"
+	CallsDataFormat = "02/01/2006"
+)
 
 type Client struct {
 	accessToken string
@@ -103,8 +106,8 @@ func (c *Client) callURLBuilder(method string, siteID int, period Period, page i
 		return url.URL{}, errors.New("dateFrom must be before dateTo")
 	}
 
-	dateFromString := period.DateFrom.Format(DateFormat)
-	dateToString := period.DateTo.Format(DateFormat)
+	dateFromString := period.DateFrom.Format(CallsDataFormat)
+	dateToString := period.DateTo.Format(CallsDataFormat)
 
 	u := url.URL{
 		Scheme: "https",
@@ -245,8 +248,8 @@ func (c *Client) leadURLBuilder(period Period, options *LeadOptions) (url.URL, e
 		return url.URL{}, errors.New("dateFrom must be before dateTo")
 	}
 
-	dateFromString := period.DateFrom.Format(DateFormat)
-	dateToString := period.DateTo.Format(DateFormat)
+	dateFromString := period.DateFrom.Format(LeadsDateFormat)
+	dateToString := period.DateTo.Format(LeadsDateFormat)
 
 	u := url.URL{
 		Scheme: "https",
