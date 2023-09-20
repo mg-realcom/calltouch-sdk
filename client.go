@@ -33,18 +33,18 @@ type Period struct {
 }
 
 type CallOptions struct {
-	uniqueOnly        bool // Флаг выгрузки уникальных звонков.
-	targetOnly        bool // Флаг выгрузки целевых звонков.
-	uniqTargetOnly    bool // Флаг выгрузки уникально-целевых звонков.
-	callbackOnly      bool // Флаг выгрузки обратных звонков.
-	withMapVisits     bool // Флаг истории посещений посетителя, совершившего звонок.
-	withOrders        bool // Флаг связки звонка со сделкой.
-	withCallTags      bool // Флаг отображения тегов звонков.
-	withComments      bool // Флаг отображения комментариев к звонкам, оставленных в плеере журнала звонков.
-	withYandexDirect  bool // Флаг выгрузки данных по рекламным кампаниям Яндекс.Директ.
-	withGoogleAdwords bool // Флаг выгрузки данных по рекламным кампаниям Google AdWords.
-	withText          bool // Флаг выгрузки разговора звонка в текстовой форме.
-	withDcm           bool // Флаг выгрузки данных по интеграции с DoubleClick Campaign Manager
+	UniqueOnly        bool // Флаг выгрузки уникальных звонков.
+	TargetOnly        bool // Флаг выгрузки целевых звонков.
+	UniqTargetOnly    bool // Флаг выгрузки уникально-целевых звонков.
+	CallbackOnly      bool // Флаг выгрузки обратных звонков.
+	WithMapVisits     bool // Флаг истории посещений посетителя, совершившего звонок.
+	WithOrders        bool // Флаг связки звонка со сделкой.
+	WithCallTags      bool // Флаг отображения тегов звонков.
+	WithComments      bool // Флаг отображения комментариев к звонкам, оставленных в плеере журнала звонков.
+	WithYandexDirect  bool // Флаг выгрузки данных по рекламным кампаниям Яндекс.Директ.
+	WithGoogleAdwords bool // Флаг выгрузки данных по рекламным кампаниям Google AdWords.
+	WithText          bool // Флаг выгрузки разговора звонка в текстовой форме.
+	WithDcm           bool // Флаг выгрузки данных по интеграции с DoubleClick Campaign Manager
 }
 
 func (c *Client) CallsDiary(ctx context.Context, siteID int, period Period, options *CallOptions) ([]Record, error) {
@@ -120,18 +120,18 @@ func (c *Client) callURLBuilder(method string, siteID int, period Period, page i
 	params.Add("limit", "1000")
 
 	if options != nil {
-		params.Add("uniqueOnly", strconv.FormatBool(options.uniqueOnly))
-		params.Add("targetOnly", strconv.FormatBool(options.targetOnly))
-		params.Add("uniqTargetOnly", strconv.FormatBool(options.uniqTargetOnly))
-		params.Add("callbackOnly", strconv.FormatBool(options.callbackOnly))
-		params.Add("withMapVisits", strconv.FormatBool(options.withMapVisits))
-		params.Add("withOrders", strconv.FormatBool(options.withOrders))
-		params.Add("withCallTags", strconv.FormatBool(options.withCallTags))
-		params.Add("withComments", strconv.FormatBool(options.withComments))
-		params.Add("withYandexDirect", strconv.FormatBool(options.withYandexDirect))
-		params.Add("withGoogleAdwords", strconv.FormatBool(options.withGoogleAdwords))
-		params.Add("withText", strconv.FormatBool(options.withText))
-		params.Add("withDcm", strconv.FormatBool(options.withDcm))
+		params.Add("uniqueOnly", strconv.FormatBool(options.UniqueOnly))
+		params.Add("targetOnly", strconv.FormatBool(options.TargetOnly))
+		params.Add("uniqTargetOnly", strconv.FormatBool(options.UniqTargetOnly))
+		params.Add("callbackOnly", strconv.FormatBool(options.CallbackOnly))
+		params.Add("withMapVisits", strconv.FormatBool(options.WithMapVisits))
+		params.Add("withOrders", strconv.FormatBool(options.WithOrders))
+		params.Add("withCallTags", strconv.FormatBool(options.WithCallTags))
+		params.Add("withComments", strconv.FormatBool(options.WithComments))
+		params.Add("withYandexDirect", strconv.FormatBool(options.WithYandexDirect))
+		params.Add("withGoogleAdwords", strconv.FormatBool(options.WithGoogleAdwords))
+		params.Add("withText", strconv.FormatBool(options.WithText))
+		params.Add("withDcm", strconv.FormatBool(options.WithDcm))
 	}
 
 	u.RawQuery = params.Encode()
