@@ -15,7 +15,7 @@ import (
 	"unicode"
 )
 
-const DateFormat = "02/01/2006"
+const DateFormat = "01/02/2006"
 
 type Client struct {
 	accessToken string
