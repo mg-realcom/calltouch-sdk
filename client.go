@@ -196,11 +196,11 @@ func (r *Record) UnmarshalJSON(b []byte) error {
 }
 
 type LeadOptions struct {
-	withMapVisits     bool // Флаг истории посещений посетителя, совершившего звонок.
-	withRequestTags   bool // Флаг выгрузки тегов, которые были присвоены заявкам.
-	withYandexDirect  bool // Флаг выгрузки данных по рекламным кампаниям Яндекс.Директ.
-	withGoogleAdwords bool // Флаг выгрузки данных по рекламным кампаниям Google AdWords.
-	withDcm           bool // Флаг выгрузки данных по интеграции с DoubleClick Campaign Manager
+	WithMapVisits     bool // Флаг истории посещений посетителя, совершившего звонок.
+	WithRequestTags   bool // Флаг выгрузки тегов, которые были присвоены заявкам.
+	WithYandexDirect  bool // Флаг выгрузки данных по рекламным кампаниям Яндекс.Директ.
+	WithGoogleAdwords bool // Флаг выгрузки данных по рекламным кампаниям Google AdWords.
+	WithDcm           bool // Флаг выгрузки данных по интеграции с DoubleClick Campaign Manager
 }
 
 func (c *Client) LeadsDiary(ctx context.Context, period Period, options *LeadOptions) ([]Record, error) {
@@ -260,11 +260,11 @@ func (c *Client) leadURLBuilder(period Period, options *LeadOptions) (url.URL, e
 	params.Add("dateTo", dateToString)
 
 	if options != nil {
-		params.Add("withMapVisits", strconv.FormatBool(options.withMapVisits))
-		params.Add("withRequestTags", strconv.FormatBool(options.withRequestTags))
-		params.Add("withYandexDirect", strconv.FormatBool(options.withYandexDirect))
-		params.Add("withGoogleAdwords", strconv.FormatBool(options.withGoogleAdwords))
-		params.Add("withDcm", strconv.FormatBool(options.withDcm))
+		params.Add("withMapVisits", strconv.FormatBool(options.WithMapVisits))
+		params.Add("withRequestTags", strconv.FormatBool(options.WithRequestTags))
+		params.Add("withYandexDirect", strconv.FormatBool(options.WithYandexDirect))
+		params.Add("withGoogleAdwords", strconv.FormatBool(options.WithGoogleAdwords))
+		params.Add("withDcm", strconv.FormatBool(options.WithDcm))
 	}
 
 	u.RawQuery = params.Encode()
