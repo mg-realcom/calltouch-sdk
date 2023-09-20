@@ -222,7 +222,7 @@ func (c *Client) LeadsDiary(ctx context.Context, period Period, options *LeadOpt
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("status code: %v", resp.StatusCode)
+		return nil, fmt.Errorf("status code - %v, reason - %v", resp.StatusCode, resp.Status)
 	}
 
 	responseBody, err := io.ReadAll(resp.Body)
