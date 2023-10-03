@@ -150,7 +150,7 @@ type CallReport struct {
 	Records      []Record `json:"records"`
 }
 
-type Record map[string]string
+type Record map[string]any
 
 func (r *Record) UnmarshalJSON(b []byte) error {
 	var raw map[string]interface{}
@@ -162,7 +162,7 @@ func (r *Record) UnmarshalJSON(b []byte) error {
 
 	var conv string
 
-	result := make(map[string]string, 0)
+	result := make(map[string]any, 0)
 
 	for k, val := range raw {
 		if val == nil {
