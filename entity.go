@@ -17,20 +17,20 @@ type Tag struct {
 }
 
 type Call struct {
-	CallID          string         `json:"callId"`          // Уникальный идентификатор звонка в Calltouch.
+	CallID          int            `json:"callId"`          // Уникальный идентификатор звонка в Calltouch.
 	Callphase       string         `json:"callphase"`       // Фаза звонка на момент API запроса:
 	Attribution     int            `json:"attribution"`     // Модель атрибуции звонков.
 	CallTags        *[]Tag         `json:"callTags"`        // Теги звонков
 	Date            string         `json:"date"`            // Дата звонка.
-	Duration        string         `json:"duration"`        // Длительность разговора.
+	Duration        int            `json:"duration"`        // Длительность разговора.
 	CallerNumber    string         `json:"callerNumber"`    // Номер звонившего.
 	RedirectNumber  string         `json:"redirectNumber"`  // Номер переадресации.
 	PhoneNumber     string         `json:"phoneNumber"`     // Номер, на который звонили.
 	Manager         string         `json:"manager"`         // ФИО менеджера, который был присвоен этому звонку с помощью API-метода присвоения менеджеров к лидам.
 	Successful      bool           `json:"successful"`      // Статус звонка.
-	UniqueCall      string         `json:"uniqueCall"`      // Уникальный звонок.
-	TargetCall      string         `json:"targetCall"`      // Целевой звонок.
-	UniqTargetCall  string         `json:"uniqTargetCall"`  // Уникально-целевой звонок.
+	UniqueCall      bool           `json:"uniqueCall"`      // Уникальный звонок.
+	TargetCall      bool           `json:"targetCall"`      // Целевой звонок.
+	UniqTargetCall  bool           `json:"uniqTargetCall"`  // Уникально-целевой звонок.
 	CallbackCall    bool           `json:"callbackCall"`    // Обратный звонок.
 	City            string         `json:"city"`            // Город, в котором находится клиент, совершивший звонок.
 	Source          string         `json:"source"`          // Источник
@@ -190,7 +190,7 @@ type MapVisits struct {
 	CtGlobalID     *int          `json:"ctGlobalId"`
 }
 
-type RequestTag []struct {
+type RequestTag struct {
 	Category string   `json:"category"`
 	Type     string   `json:"type"`
 	Names    []string `json:"names"`

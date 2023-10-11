@@ -1,6 +1,7 @@
 package calltouch
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -53,6 +54,7 @@ type CallOptions struct {
 func (c *Client) CallsDiary(ctx context.Context, siteID int, period Period, options *CallOptions) ([]Call, error) {
 	page := 0
 	calls := make([]Call, 0)
+	rawCalls := make([]string, 0)
 
 	var isOk bool
 	for !isOk {
@@ -90,6 +92,7 @@ func (c *Client) CallsDiary(ctx context.Context, siteID int, period Period, opti
 		}
 
 		calls = append(calls, data.Records...)
+		rawCalls = append(rawCalls, string(responseBody))
 		isOk = data.PageTotal == data.Page
 
 		closeErr := resp.Body.Close()
@@ -235,7 +238,7 @@ func (c *Client) LeadsDiary(ctx context.Context, period Period, options *LeadOpt
 
 	var leads []Lead
 
-	err = json.Unmarshal(responseBody, &leads)
+	err = json.NewDecoder(bytes.NewReader(responseBody)).Decode(&leads)
 	if err != nil {
 		return nil, err
 	}
