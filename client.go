@@ -50,9 +50,9 @@ type CallOptions struct {
 	WithDcm           bool // Флаг выгрузки данных по интеграции с DoubleClick Campaign Manager
 }
 
-func (c *Client) CallsDiary(ctx context.Context, siteID int, period Period, options *CallOptions) ([]Record, error) {
+func (c *Client) CallsDiary(ctx context.Context, siteID int, period Period, options *CallOptions) ([]Call, error) {
 	page := 0
-	calls := make([]Record, 0)
+	calls := make([]Call, 0)
 
 	var isOk bool
 	for !isOk {
@@ -143,11 +143,11 @@ func (c *Client) callURLBuilder(method string, siteID int, period Period, page i
 }
 
 type CallReport struct {
-	Page         int      `json:"page"`
-	PageTotal    int      `json:"pageTotal"`
-	PageSize     int      `json:"pageSize"`
-	RecordsTotal int      `json:"recordsTotal"`
-	Records      []Record `json:"records"`
+	Page         int    `json:"page"`
+	PageTotal    int    `json:"pageTotal"`
+	PageSize     int    `json:"pageSize"`
+	RecordsTotal int    `json:"recordsTotal"`
+	Records      []Call `json:"records"`
 }
 
 type Record map[string]any
@@ -206,7 +206,7 @@ type LeadOptions struct {
 	WithDcm           bool // Флаг выгрузки данных по интеграции с DoubleClick Campaign Manager
 }
 
-func (c *Client) LeadsDiary(ctx context.Context, period Period, options *LeadOptions) ([]Record, error) {
+func (c *Client) LeadsDiary(ctx context.Context, period Period, options *LeadOptions) ([]Lead, error) {
 	u, err := c.leadURLBuilder(period, options)
 	if err != nil {
 		return nil, err
@@ -233,7 +233,7 @@ func (c *Client) LeadsDiary(ctx context.Context, period Period, options *LeadOpt
 		return nil, err
 	}
 
-	var leads []Record
+	var leads []Lead
 
 	err = json.Unmarshal(responseBody, &leads)
 	if err != nil {
