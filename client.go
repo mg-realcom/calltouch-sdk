@@ -51,7 +51,7 @@ type CallOptions struct {
 	WithDcm           bool // Флаг выгрузки данных по интеграции с DoubleClick Campaign Manager
 }
 
-func (c *Client) CallsDiary(ctx context.Context, siteID int, period Period, options *CallOptions) ([]Call, error) {
+func (c *Client) CallsDiary(ctx context.Context, siteID int, period Period, options map[string]bool) ([]Call, error) {
 	page := 0
 	calls := make([]Call, 0)
 	rawCalls := make([]string, 0)
@@ -104,7 +104,7 @@ func (c *Client) CallsDiary(ctx context.Context, siteID int, period Period, opti
 	return calls, nil
 }
 
-func (c *Client) callURLBuilder(method string, siteID int, period Period, page int, options *CallOptions) (url.URL, error) {
+func (c *Client) callURLBuilder(method string, siteID int, period Period, page int, options map[string]bool) (url.URL, error) {
 	if period.DateFrom.After(period.DateTo) {
 		return url.URL{}, errors.New("dateFrom must be before dateTo")
 	}
@@ -125,21 +125,9 @@ func (c *Client) callURLBuilder(method string, siteID int, period Period, page i
 	params.Add("page", strconv.Itoa(page))
 	params.Add("limit", "1000")
 
-	if options != nil {
-		params.Add("uniqueOnly", strconv.FormatBool(options.UniqueOnly))
-		params.Add("targetOnly", strconv.FormatBool(options.TargetOnly))
-		params.Add("uniqTargetOnly", strconv.FormatBool(options.UniqTargetOnly))
-		params.Add("callbackOnly", strconv.FormatBool(options.CallbackOnly))
-		params.Add("withMapVisits", strconv.FormatBool(options.WithMapVisits))
-		params.Add("withOrders", strconv.FormatBool(options.WithOrders))
-		params.Add("withCallTags", strconv.FormatBool(options.WithCallTags))
-		params.Add("withComments", strconv.FormatBool(options.WithComments))
-		params.Add("withYandexDirect", strconv.FormatBool(options.WithYandexDirect))
-		params.Add("withGoogleAdwords", strconv.FormatBool(options.WithGoogleAdwords))
-		params.Add("withText", strconv.FormatBool(options.WithText))
-		params.Add("withDcm", strconv.FormatBool(options.WithDcm))
+	for k, v := range options {
+		params.Add(k, strconv.FormatBool(v))
 	}
-
 	u.RawQuery = params.Encode()
 
 	return u, nil
