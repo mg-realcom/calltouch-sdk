@@ -197,7 +197,7 @@ type LeadOptions struct {
 	WithDcm           bool // Флаг выгрузки данных по интеграции с DoubleClick Campaign Manager
 }
 
-func (c *Client) LeadsDiary(ctx context.Context, period Period, options *LeadOptions) ([]Lead, error) {
+func (c *Client) LeadsDiary(ctx context.Context, period Period, options map[string]bool) ([]Lead, error) {
 	u, err := c.leadURLBuilder(period, options)
 	if err != nil {
 		return nil, err
@@ -234,7 +234,7 @@ func (c *Client) LeadsDiary(ctx context.Context, period Period, options *LeadOpt
 	return leads, nil
 }
 
-func (c *Client) leadURLBuilder(period Period, options *LeadOptions) (url.URL, error) {
+func (c *Client) leadURLBuilder(period Period, options map[string]bool) (url.URL, error) {
 	if period.DateFrom.After(period.DateTo) {
 		return url.URL{}, errors.New("dateFrom must be before dateTo")
 	}
@@ -253,15 +253,9 @@ func (c *Client) leadURLBuilder(period Period, options *LeadOptions) (url.URL, e
 	params.Add("dateFrom", dateFromString)
 	params.Add("dateTo", dateToString)
 
-	if options != nil {
-		params.Add("withMapVisits", strconv.FormatBool(options.WithMapVisits))
-		params.Add("withRequestTags", strconv.FormatBool(options.WithRequestTags))
-		params.Add("withYandexDirect", strconv.FormatBool(options.WithYandexDirect))
-		params.Add("withGoogleAdwords", strconv.FormatBool(options.WithGoogleAdwords))
-		params.Add("withDcm", strconv.FormatBool(options.WithDcm))
+	for k, v := range options {
+		params.Add(k, strconv.FormatBool(v))
 	}
-
 	u.RawQuery = params.Encode()
-
 	return u, nil
 }
