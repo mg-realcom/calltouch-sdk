@@ -203,7 +203,13 @@ type Phrase struct {
 }
 
 type CallBackInfo struct {
-	Fields []ValueField `json:"fields"`
+	CallbackRequestID    int          `json:"callbackRequestId"`
+	CallbackFinalAttempt bool         `json:"callbackFinalAttempt"`
+	FacebookLeadgenID    int          `json:"facebookLeadgenId"`
+	LeadID               int          `json:"leadId"`
+	AdID                 int          `json:"adId"`
+	Fields               []ValueField `json:"fields"`
+	LeadsCampaignName    string       `json:"leadsCampaignName"`
 }
 
 type ValueField struct {
